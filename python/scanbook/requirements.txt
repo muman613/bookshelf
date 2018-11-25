@@ -1,3 +1,1 @@
-isbnlib==3.9.3
-isbntools==4.3.17
 psycopg2==2.7.1

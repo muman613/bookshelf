@@ -1,5 +1,4 @@
 import curses
-# from isbntools.app import *
 import json
 import urllib.request
 
@@ -21,6 +20,11 @@ class BookScanner:
         sw.bkgd(" ", curses.color_pair(2))
         sw.border()
         self.sw = sw
+        self.init_color_pairs()
+        curses.curs_set(0)
+
+        self.scr.nodelay(True)
+        self.scr.border()
 
     @staticmethod
     def get_isbn_google_api(isbn: str):
@@ -43,25 +47,41 @@ class BookScanner:
             return None
 
     def draw_isbn(self, isbn: str, metadata=None):
+        def add_label(y, label_text, field, dflt="N/A", use_value=None):
+            value = None
+            if use_value is None and metadata:
+                value = dflt if field not in metadata else str(metadata[field])
+            else:
+                value = use_value
+
+            field_label = "{:12} : {:60}".format(label_text, value)
+            self.sw.addstr(y, 10, field_label)
+
         label = "Last ISBN # Scanned : {:14}".format(isbn)
         self.center_label(self.scr, 6, label)
+
         if metadata:
             self.sw.clear()
             self.sw.border()
 
-            title = metadata["title"]
-            publisher = metadata["publisher"]
-            authors = ",".join(metadata["authors"])
-            pub_date = metadata["publishedDate"]
+            authors = ", ".join(metadata["authors"])
 
-            label = "Title     : {:60}".format(title)
-            self.sw.addstr(2, 10, label)
-            label = "Publisher : {:60}".format(publisher)
-            self.sw.addstr(3, 10, label)
-            label = "Author(s) : {:60}".format(authors)
-            self.sw.addstr(4, 10, label)
-            label = "Published : {:60}".format(pub_date)
-            self.sw.addstr(5, 10, label)
+            startrow = 2
+
+            add_label(startrow, "Title", "title")
+            startrow += 1
+
+            add_label(startrow, "Publisher", "publisher")
+            startrow += 1
+
+            add_label(startrow, "Author(s)", None, use_value=authors)
+            startrow += 1
+
+            add_label(startrow, "Published", "publishedDate")
+            startrow += 1
+
+            add_label(startrow, "Pages", "pageCount")
+            startrow += 1
 
     def center_label(self, scr, y: int, label: str, pair: int= 0):
         h, w = scr.getmaxyx()
@@ -133,47 +153,15 @@ class BookScanner:
                     self.handle_scanned_code(isbn_text)
                     isbn_text = ""
 
-def init_color_pairs():
-    curses.init_pair(1, curses.COLOR_RED, curses.COLOR_WHITE)
-    curses.init_pair(2, curses.COLOR_WHITE, curses.COLOR_BLUE)
-    curses.init_pair(3, curses.COLOR_YELLOW, curses.COLOR_RED)
+    def init_color_pairs(self):
+        curses.init_pair(1, curses.COLOR_RED, curses.COLOR_WHITE)
+        curses.init_pair(2, curses.COLOR_WHITE, curses.COLOR_BLUE)
+        curses.init_pair(3, curses.COLOR_YELLOW, curses.COLOR_RED)
 
 
 def bookshelf_main(stdscr):
-    global width, height
-
-    init_color_pairs()
-    curses.curs_set(0)
-
-    # curses.cbreak()
-
-    stdscr.nodelay(True)
-    stdscr.border()
-
     scanner = BookScanner(stdscr)
-
     scanner.run()
-
-    # height, width = stdscr.getmaxyx()
-    #
-    # redraw_border(stdscr)
-
-    isbn_text = ""
-
-
-    # while True:
-    #     stdscr.refresh()
-    #
-    #     s = stdscr.getch()
-    #     if s != -1:
-    #         if s == ord("q"):
-    #             break
-    #         elif ord("0") <= s <= ord("9"):
-    #             isbn_text += chr(s)
-    #         elif s == ord("\n"):
-    #             #draw_isbn(stdscr, isbn_text)
-    #             handle_scanned_code(stdscr, isbn_text)
-    #             isbn_text = ""
 
 
 def main():
