@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
+    <data-source source="LOCAL" name="michael@raspi-mate" uuid="a8a038ae-b53f-4ee7-852a-bb01fa39bf8a">
+      <driver-ref>postgresql</driver-ref>
+      <synchronize>true</synchronize>
+      <remarks>Connection to raspi-mate</remarks>
+      <jdbc-driver>org.postgresql.Driver</jdbc-driver>
+      <jdbc-url>jdbc:postgresql://raspi-mate:5432/michael</jdbc-url>
+    </data-source>
+    <data-source source="LOCAL" name="bookshelf@raspi-mate" uuid="1bdde97e-95e6-4f2c-8521-df7505a2eec7">
+      <driver-ref>postgresql</driver-ref>
+      <synchronize>true</synchronize>
+      <remarks>Bookshelf database</remarks>
+      <jdbc-driver>org.postgresql.Driver</jdbc-driver>
+      <jdbc-url>jdbc:postgresql://raspi-mate:5432/bookshelf</jdbc-url>
+    </data-source>
+  </component>
+</project>

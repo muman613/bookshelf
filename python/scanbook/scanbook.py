@@ -2,6 +2,8 @@ import curses
 import json
 import urllib.request
 
+import book
+
 
 class BookScanner:
     """
@@ -13,16 +15,18 @@ class BookScanner:
     width, height = 0, 0
 
     def __init__(self, scr):
+
         self.scr = scr
         self.height, self.width = scr.getmaxyx()
+
+        self.init_color_pairs()
 
         sw = scr.subwin(self.height - 20, self.width - 20, 10, 10)
         sw.bkgd(" ", curses.color_pair(2))
         sw.border()
         self.sw = sw
-        self.init_color_pairs()
-        curses.curs_set(0)
 
+        curses.curs_set(0)
         self.scr.nodelay(True)
         self.scr.border()
 
