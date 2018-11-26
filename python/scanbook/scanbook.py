@@ -2,7 +2,7 @@ import curses
 import json
 import urllib.request
 
-import book
+from book import Book
 
 
 class BookScanner:
@@ -11,11 +11,11 @@ class BookScanner:
     basically waits for the user to scan in the ISBN barcodes and then looks up the ISBN on the google book API url.
     """
 
-    last_scanned_code = None
-    width, height = 0, 0
-
     def __init__(self, scr):
-
+        self.last_scanned_code = None
+        self.book_list = []
+        self.width = 0
+        self.height = 0
         self.scr = scr
         self.height, self.width = scr.getmaxyx()
 
@@ -25,71 +25,51 @@ class BookScanner:
         sw.bkgd(" ", curses.color_pair(2))
         sw.border()
         self.sw = sw
-
+        # curses.nonl()
         curses.curs_set(0)
         self.scr.nodelay(True)
         self.scr.border()
 
-    @staticmethod
-    def get_isbn_google_api(isbn: str):
-        """
-        Look up the ISBN # on the google book API. The server returns to us a JSON formatted file which we use
-        to extract the relevant information.
-        :param isbn: ISBN # to look-up
-        :return: Dictionary containing the parsed Json.
-        """
-        urlbase = "https://www.googleapis.com/books/v1/volumes?q=isbn:"
-
-        fullurl = urlbase + isbn
-
-        with urllib.request.urlopen(fullurl) as url:
-            data = json.loads(url.read().decode())
-
-        if "items" in data:
-            return data["items"][0]["volumeInfo"]
-        else:
-            return None
-
-    def draw_isbn(self, isbn: str, metadata=None):
+    def draw_book(self, book: Book):
         def add_label(y, label_text, field, dflt="N/A", use_value=None):
             value = None
-            if use_value is None and metadata:
-                value = dflt if field not in metadata else str(metadata[field])
+            if use_value is None and book:
+                value = str(book[field]) if hasattr(book, field) else "N/A"
             else:
                 value = use_value
 
             field_label = "{:12} : {:60}".format(label_text, value)
             self.sw.addstr(y, 10, field_label)
 
-        label = "Last ISBN # Scanned : {:14}".format(isbn)
-        self.center_label(self.scr, 6, label)
+        self.sw.clear()
+        self.sw.border()
 
-        if metadata:
-            self.sw.clear()
-            self.sw.border()
+        startrow = 2
 
-            authors = ", ".join(metadata["authors"])
+        add_label(startrow, "Title", "title")
+        startrow += 1
 
-            startrow = 2
+        add_label(startrow, "Publisher", "publisher")
+        startrow += 1
 
-            add_label(startrow, "Title", "title")
-            startrow += 1
+        add_label(startrow, "Author(s)", "author")
+        startrow += 1
 
-            add_label(startrow, "Publisher", "publisher")
-            startrow += 1
+        add_label(startrow, "Published", "pubdate")
+        startrow += 1
 
-            add_label(startrow, "Author(s)", None, use_value=authors)
-            startrow += 1
-
-            add_label(startrow, "Published", "publishedDate")
-            startrow += 1
-
-            add_label(startrow, "Pages", "pageCount")
-            startrow += 1
+        add_label(startrow, "Pages", "pages")
+        startrow += 1
 
     def center_label(self, scr, y: int, label: str, pair: int= 0):
+        """
+        Display label centered horizontally on the line
+        :param scr: Window to write label to
+        :param y: row to display label on
+        :param label: text to display
+        :param pair: color-pair to use
+        """
         h, w = scr.getmaxyx()
-
         scr.addstr(y, int((w - len(label)) / 2), label, curses.color_pair(pair))
 
     def redraw_border(self, scr):
@@ -97,16 +77,6 @@ class BookScanner:
         self.center_label(self.scr, 0, "Book Scanning Application", 1)
         self.center_label(self.scr, 1, "By Michael Uman", 1)
         self.center_label(self.scr, self.height - 2, "Hit 'q' to exit")
-
-    @staticmethod
-    def dump_isbn(metadata):
-        """
-        Dump the JSON data to the file /tmp/isbn.data.
-        :param metadata: json data to dump
-        """
-        with open("/tmp/isbn.data", "a+") as fp:
-            json.dump(metadata, fp, indent=4)
-            fp.write("\n")
 
     def display_product_rescan(self):
         """
@@ -124,15 +94,23 @@ class BookScanner:
         self.sw.border()
         self.center_label(self.sw, 2, "<< Not an ISBN code >>", 3)
 
+    def is_isbn_in_list(self, isbn: str):
+        for b in self.book_list:
+            if b.isbn == isbn:
+                return True
+        return False
+
     def handle_scanned_code(self, isbn: str):
-        if self.last_scanned_code == isbn:
+        if self.is_isbn_in_list(isbn):
             self.display_product_rescan()
         else:
-            data = BookScanner.get_isbn_google_api(isbn)
-            if data:
-                BookScanner.dump_isbn(data)
-                self.draw_isbn(isbn, data)
-                self.last_scanned_code = isbn
+            label = "Last ISBN # Scanned : {:14}".format(isbn)
+            self.center_label(self.scr, 6, label)
+
+            book = Book(isbn)
+            if book:
+                self.draw_book(book)
+                self.book_list.append(book)
             else:
                 self.display_not_isbn_no()
 
@@ -153,8 +131,8 @@ class BookScanner:
                 elif ord("0") <= s <= ord("9"):
                     isbn_text += chr(s)
                 elif s == ord("\n"):
-                    # draw_isbn(stdscr, isbn_text)
-                    self.handle_scanned_code(isbn_text)
+                    if isbn_text:
+                        self.handle_scanned_code(isbn_text)
                     isbn_text = ""
 
     def init_color_pairs(self):

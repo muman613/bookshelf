@@ -23,9 +23,15 @@ def get_isbn_google_api(isbn: str):
 
 
 class Book:
-    data = {}
+    """
+    The book class is used to encapsulate the properties of a book.
+    """
 
     def __init__(self, isbn = None):
+        """
+        If an isbn # is passed to the constructor it will look up the ISBN # using the google book API.
+        :param isbn: string representing the ISBN, will be None if no parameter is passed.
+        """
         self.data = {
             "isbn": None,
             "title": None,
@@ -41,8 +47,15 @@ class Book:
             self.load_from_google(isbn)
 
     def load_from_google(self, isbn: str):
+        """
+        Get the data in JSON format from the google API and fill in the classes data dictionary.
+        :param isbn:
+        :return:
+        """
         google_data = get_isbn_google_api(isbn)
         if google_data:
+            Book.dump_isbn(google_data)
+
             self.data["isbn"] = isbn
             self.data["title"] = google_data["title"] if "title" in google_data else "N/A"
             authors = ", ".join(google_data["authors"]) if "authors" in google_data else "N/A"
@@ -54,21 +67,21 @@ class Book:
             self.data["image"] = google_data["imageLinks"]["thumbnail"] if "imageLinks" in google_data else "N/A"
 
     def __getitem__(self, item):
-        print("getitem({})".format(item))
+        # print("getitem({})".format(item))
         if item in self.data.keys():
             return self.data[item]
         else:
             return None
 
     def __getattr__(self, item):
-        print("getattr({})".format(item))
+        # print("getattr({})".format(item))
         if item in self.data.keys():
             return self.data[item]
         else:
             raise IndexError
 
     def __setitem__(self, key, value):
-        print("setitem({}, {})".format(key, value))
+        # print("setitem({}, {})".format(key, value))
         if key in self.data.keys():
             self.data[key] = value
         else:
@@ -87,6 +100,22 @@ class Book:
                                                                  self.data["author"], self.data["publisher"],
                                                                  self.data["pubdate"], self.data["pages"],
                                                                  self.data["desc"][:60])
+
+    def __bool__(self):
+        return self.data["isbn"] is not None and self.data["title"] is not None
+
+    def __eq__(self, other):
+        return self.data["isbn"] == other["isbn"]
+
+    @staticmethod
+    def dump_isbn(metadata):
+        """
+        Dump the JSON data to the file /tmp/isbn.data.
+        :param metadata: json data to dump
+        """
+        with open("/tmp/isbn.data", "a+") as fp:
+            json.dump(metadata, fp, indent=4)
+            fp.write("\n")
 
 
 def main():
@@ -125,6 +154,10 @@ def main():
     newbook.author = "James Pollack"
     newbook.publisher = "O'Reilly & Son"
     newbook.pubdate = "2016"
+
+    if newbook:
+        print(newbook)
+        print("-" * 80)
 
     books.append(newbook)
 
