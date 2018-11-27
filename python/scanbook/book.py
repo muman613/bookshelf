@@ -67,14 +67,12 @@ class Book:
             self.data["image"] = google_data["imageLinks"]["thumbnail"] if "imageLinks" in google_data else "N/A"
 
     def __getitem__(self, item):
-        # print("getitem({})".format(item))
         if item in self.data.keys():
             return self.data[item]
         else:
-            return None
+            raise IndexError
 
     def __getattr__(self, item):
-        # print("getattr({})".format(item))
         if item in self.data.keys():
             return self.data[item]
         else:

@@ -1,11 +1,5 @@
 import curses
-import json
-import urllib.request
 import psycopg2 as pg
-#import psycopg2.extras
-
-#import atexit
-
 from book import Book
 
 
@@ -15,10 +9,10 @@ class BookScanner:
     basically waits for the user to scan in the ISBN barcodes and then looks up the ISBN on the google book API url.
     """
 
-    db_name = "bookshelf"
-    user_name = "bookshelf"
-    host_name = "raspi-mate"
-    passwd = "default"
+    DB_NAME = "bookshelf"
+    USER_NAME = "bookshelf"
+    HOST_NAME = "raspi-mate"
+    PASSWD = "default"
 
     def __init__(self, scr):
         self.last_scanned_code = None
@@ -66,7 +60,7 @@ class BookScanner:
         self.statwin = sw
 
     def open_database(self):
-        self.conn = pg.connect(database=self.db_name, user=self.user_name, password=self.passwd, host=self.host_name)
+        self.conn = pg.connect(database=self.DB_NAME, user=self.USER_NAME, password=self.PASSWD, host=self.HOST_NAME)
 
     def close_database(self):
         if self.conn:
