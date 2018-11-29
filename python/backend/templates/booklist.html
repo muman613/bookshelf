@@ -1,16 +1,29 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <div id="heading"><h1>Bookend Book Inventory System</h1></div>
-    <p>Hello {{  name }}</p>
     <p>Found {{ book_list|length }} books:</p>
-    <table border="1" width="80%">
+    <table id="booktable">
+        <tr>
+            <th>ISBN</th>
+            <th>Title</th>
+            <th>Author</th>
+            <th>Cover</th>
+        </tr>
         {% for book in book_list %}
             <tr>
                 <td>{{ book.isbn }}</td>
                 <td>{{ book.title }}</td>
                 <td>{{ book.author }}</td>
-                <td>{{ book.image }}</td>
+                <td>
+                    <a href="book/{{ book.isbn }}">
+                        {# If the image contains "N/A"  #}
+                        {% if book.image != "N/A" %}
+                            <img src="{{ book.image }}">
+                        {% else %}
+                            <img width="128" src="static/no_image.jpg">
+                        {% endif %}
+                    </a>
+                </td>
             </tr>
         {% endfor %}
     </table>
