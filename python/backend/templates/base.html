@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    {% if title %}
+    <title>{{  title }}</title>
+    {% else %}
+    <title>Unknown</title>
+    {% endif %}
+    <style>
+        #heading {
+            background: lightgreen;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div>Bookshelf: <a href="/index">HOME</a></div>
+    {% block content %}
+    {% endblock %}
+    <script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
+    <script src="http://netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+</body>
+</html>

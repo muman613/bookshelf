@@ -16,4 +16,4 @@ The application works with the user `bookshelf` and the database `bookshelf` whi
 
 * Create the database if it doesn't exist.
 * Provide RESTful API for web interface.
-
+* Handle screen resize gracefully ( https://docs.python.org/3/library/curses.html#constants )

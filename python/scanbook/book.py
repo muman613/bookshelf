@@ -115,6 +115,8 @@ class Book:
             json.dump(metadata, fp, indent=4)
             fp.write("\n")
 
+    def get_keys(self):
+        return self.data.keys()
 
 def main():
     book = Book("9781491933176")
@@ -163,6 +165,9 @@ def main():
         print(mybook)
 
     print("-" * 80)
+
+    for key in newbook.get_keys():
+        print("key = {}".format(key))
 
 
 if __name__ == "__main__":

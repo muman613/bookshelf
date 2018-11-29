@@ -1,11 +1,25 @@
 import psycopg2 as pg
 from book import Book
+from enum import IntEnum
 
 
 DB_NAME = "bookshelf"
 USER_NAME = "bookshelf"
 HOST_NAME = "raspi-mate"
 PASSWD = "default"
+
+
+class SortBy(IntEnum):
+    """
+    Enumerated type representing the sort order used to retreive the bookself.
+    """
+    ISBN = 1
+    TITLE = 2
+    PUBLISHER = 3
+    AUTHOR = 4
+    PUBDATE = 5
+    PAGES = 6
+
 
 
 class BookShelf:
@@ -22,8 +36,8 @@ class BookShelf:
     def add_book(self, book: Book):
         with self.db_conn as connect:
             with connect.cursor() as cur:
-                cmd = "INSERT INTO book_table(isbn, title, publisher, author, pub_date, pages, description) VALUES(%s, %s, %s, %s, %s, %s, %s);"
-                cur.execute(cmd, (book.isbn, book.title, book.publisher, book.author, book.pubdate, book.pages, book.desc))
+                cmd = "INSERT INTO book_table(isbn, title, publisher, author, pub_date, pages, description, cover_image) VALUES(%s, %s, %s, %s, %s, %s, %s, %s);"
+                cur.execute(cmd, (book.isbn, book.title, book.publisher, book.author, book.pubdate, book.pages, book.desc, book.image))
 
     def del_book(self, book: Book):
         with self.db_conn as connect:
@@ -31,10 +45,34 @@ class BookShelf:
                 cmd = "DELETE FROM book_table WHERE isbn=%s;"
                 cur.execute(cmd, (book.isbn, ))
 
-    def get_books_to_list(self, l: list):
+    def update_book(self, book: Book):
+        with self.db_conn as connect:
+            with connect.cursor() as cur:
+                cmd = """
+                UPDATE book_table
+                SET title = %s,
+                    publisher = %s,
+                    author = %s,
+                    pub_date = %s,
+                    pages = %s,
+                    description = %s,
+                    cover_image = %s
+                WHERE
+                    isbn=%s
+                """
+
+                cur.execute(cmd, (book.title, book.publisher, book.author, book.pubdate, book.pages, book.desc, book.image, book.isbn))
+
+
+    def get_books_to_list(self, l: list, sortby=None):
         with self.db_conn as conn:
             with conn.cursor() as cur:
-                cmd = "SELECT * FROM book_table ORDER BY isbn;"
+                by_field = "isbn"
+                if sortby is not None:
+                    book_fields = list(Book().get_keys())
+                    by_field = book_fields[int(sortby) - 1]
+
+                cmd = "SELECT * FROM book_table ORDER BY {}".format(by_field)
                 cur.execute(cmd)
                 rows = cur.fetchall()
                 for row in rows:
@@ -77,14 +115,28 @@ def test():
 
 
 def main():
+    import time
+
     bs = BookShelf()
     if bs.open():
         booklist = []
 
-        bs.get_books_to_list(booklist)
+        bs.get_books_to_list(booklist, sortby=SortBy.TITLE)
         print("The bookshelf contains {} books".format(len(booklist)))
+        for key in Book().get_keys():
+            print("Key: {}".format(key))
+
+        index = 1;
         for which_book in booklist:
-            print(which_book)
+            book_copy = Book(which_book.isbn)
+            print("{} {}".format(index, book_copy))
+            bs.update_book(book_copy)
+            time.sleep(5)
+            index += 1
+
+#        book_copy = Book(booklist[0].isbn)
+ #       print(book_copy)
+  #      bs.update_book(book_copy)
 
         bs.close()
 
