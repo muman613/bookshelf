@@ -4,6 +4,8 @@ from bookshelf import BookShelf, SortBy
 import json
 
 app = Flask(__name__)
+app.config['SECRET_KEY'] = "mad-money-month"
+
 db = BookShelf()
 
 db.open()
