@@ -4,7 +4,7 @@ This repository contains the Python code to read ISBN # supplied by any barcode 
 
 When a code is sent and a carriage return encountered at that point the google book API is queried and if the isbn code is found the information is displayed to the screen. The book information is then written to the database back-end.
 
-# Demo
+## Demo
 
 If my Amazon EC2 Instance is up and running you should be able to view the flask application running @
 
