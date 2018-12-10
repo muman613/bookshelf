@@ -1,5 +1,5 @@
 import psycopg2 as pg
-from .book import Book
+from bookshelf.book import Book
 from enum import IntEnum
 
 
@@ -114,9 +114,22 @@ def test():
         bs.close()
 
 
-def main():
+def update_images(bs: BookShelf, to: int =5):
     import time
+    index = 1;
+    booklist = list()
 
+    bs.get_books_to_list(booklist)
+
+    for which_book in booklist:
+        book_copy = Book(which_book.isbn)
+        print("{} {}".format(index, book_copy))
+        bs.update_book(book_copy)
+        time.sleep(to)
+        index += 1
+
+
+def main():
     bs = BookShelf()
     if bs.open():
         booklist = []
@@ -126,13 +139,6 @@ def main():
         for key in Book().get_keys():
             print("Key: {}".format(key))
 
-        index = 1;
-        for which_book in booklist:
-            book_copy = Book(which_book.isbn)
-            print("{} {}".format(index, book_copy))
-            bs.update_book(book_copy)
-            time.sleep(5)
-            index += 1
 
 #        book_copy = Book(booklist[0].isbn)
  #       print(book_copy)
