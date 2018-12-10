@@ -1,6 +1,6 @@
 from flask import Flask, render_template, redirect, send_from_directory
 # import bookshelf
-from bookshelf import BookShelf, SortBy
+from bookshelf.bookshelf import BookShelf, SortBy
 import json
 
 app = Flask(__name__)
@@ -50,4 +50,13 @@ def show_books():
 
 
 if __name__ == "__main__":
-    app.run(debug=True, port=8000)
+    import argparse
+
+    parser = argparse.ArgumentParser(prog="app.py", description="bookshelf app")
+    parser.add_argument("--debug", dest="debug", default=False, action='store_true')
+    parser.add_argument("--port", dest="port", default="8000", action='store')
+    parser.add_argument("--host", dest="host", default="0.0.0.0", action='store')
+
+    args = parser.parse_args()
+    
+    app.run(debug=args.debug, port=args.port, host=args.host)

@@ -1,11 +1,11 @@
 import psycopg2 as pg
-from book import Book
+from .book import Book
 from enum import IntEnum
 
 
 DB_NAME = "bookshelf"
 USER_NAME = "bookshelf"
-HOST_NAME = "raspi-mate"
+HOST_NAME = "laserquad.ddns.net"
 PASSWD = "default"
 
 

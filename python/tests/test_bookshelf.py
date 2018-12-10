@@ -1,9 +1,7 @@
 #!/usr/bin/env python3
 
 import unittest
-import book
-import bookshelf
-
+from bookshelf.bookshelf import *
 
 class BookTestCase(unittest.TestCase):
     """
@@ -17,7 +15,7 @@ class BookTestCase(unittest.TestCase):
         """
         Test the retrieval of the book information from the Google API.
         """
-        b = book.Book(self.test_isbn_1)
+        b = Book(self.test_isbn_1)
         self.assertTrue(b.isbn == self.test_isbn_1)
         self.assertTrue(b.title == "Teaching the Best Practice Way")
 
@@ -25,8 +23,8 @@ class BookTestCase(unittest.TestCase):
         """
         Test if two books are equal or not
         """
-        b1 = book.Book(self.test_isbn_1)
-        b2 = book.Book(self.test_isbn_2)
+        b1 = Book(self.test_isbn_1)
+        b2 = Book(self.test_isbn_2)
         self.assertTrue(b1 == b1)
         self.assertTrue(b2 == b2)
         self.assertTrue(b1 != b2)
@@ -38,7 +36,7 @@ class BookTestCase(unittest.TestCase):
         title = "Uncle Johns Band"
         publisher = "Bill Graham Productions"
         pubdate = "1965"
-        b = book.Book()
+        b = Book()
         b.isbn = self.test_isbn_1
         b.title = title
         b.publisher = publisher
@@ -59,12 +57,12 @@ class BookshelfTestCase(unittest.TestCase):
         Test the insertion and deletion of a book from the bookshelf storage.
         :return:
         """
-        bs = bookshelf.BookShelf()
+        bs = BookShelf()
         if bs.open():
             book_list = []
 
             # Add a book
-            b = book.Book(self.test_isbn)
+            b = Book(self.test_isbn)
             bs.add_book(b)
 
             #

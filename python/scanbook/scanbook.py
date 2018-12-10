@@ -1,6 +1,6 @@
 import curses
 import psycopg2 as pg
-from book import Book
+from bookshelf.book import Book
 
 
 class BookScanner:
