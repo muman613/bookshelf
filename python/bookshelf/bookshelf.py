@@ -1,12 +1,13 @@
 import psycopg2 as pg
 from bookshelf.book import Book
 from enum import IntEnum
-
+import logging
+import os
 
 DB_NAME = "bookshelf"
-USER_NAME = "bookshelf"
 HOST_NAME = "laserquad.ddns.net"
-PASSWD = "default"
+USER_NAME = os.getenv("BOOKSHELF_USER", "bookshelf_user")
+USER_PASSWD = os.getenv("BOOKSHELF_PASSWORD","default")
 
 
 class SortBy(IntEnum):
@@ -21,13 +22,12 @@ class SortBy(IntEnum):
     PAGES = 6
 
 
-
 class BookShelf:
     def __init__(self):
         self.db_conn = None
 
     def open(self):
-        self.db_conn = pg.connect(dbname=DB_NAME, user=USER_NAME, password=PASSWD, host=HOST_NAME)
+        self.db_conn = pg.connect(dbname=DB_NAME, user=USER_NAME, password=USER_PASSWD, host=HOST_NAME)
         return self.db_conn.status == pg.extensions.STATUS_READY
 
     def close(self):
@@ -65,6 +65,8 @@ class BookShelf:
 
 
     def get_books_to_list(self, l: list, sortby=None):
+        logging.getLogger("bookshelf").debug("get_books_to_list()")
+
         with self.db_conn as conn:
             with conn.cursor() as cur:
                 by_field = "isbn"

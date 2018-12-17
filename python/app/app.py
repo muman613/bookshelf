@@ -1,7 +1,14 @@
 from flask import Flask, render_template, redirect, send_from_directory
-# import bookshelf
 from bookshelf.bookshelf import BookShelf, SortBy
 import json
+import logging
+
+logger = logging.getLogger("bookshelf")
+handler = logging.StreamHandler()
+formatter = logging.Formatter(
+        '%(asctime)s %(name)-12s %(levelname)-8s %(message)s')
+handler.setFormatter(formatter)
+logger.addHandler(handler)
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = "mad-money-month"
@@ -25,6 +32,7 @@ def serve_static(file):
 
 @app.route("/book/<isbn>")
 def lookup_isbn(isbn):
+    # logger.debug("lookup_isbn({})".format(isbn))
     book_list = []
     db.get_books_to_list(book_list)
     jsonobj = {}
@@ -44,6 +52,7 @@ def lookup_isbn(isbn):
 
 @app.route("/books")
 def show_books():
+    logger.debug("show_books()")
     book_list = []
     db.get_books_to_list(book_list, sortby=SortBy.TITLE)
     return render_template('booklist.html', book_list=book_list, title=title)
@@ -58,5 +67,8 @@ if __name__ == "__main__":
     parser.add_argument("--host", dest="host", default="0.0.0.0", action='store')
 
     args = parser.parse_args()
-    
+
+    if args.debug:
+        logger.setLevel(logging.DEBUG)
+
     app.run(debug=args.debug, port=args.port, host=args.host)
