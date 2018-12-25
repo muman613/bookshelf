@@ -3,6 +3,7 @@
 import unittest
 from bookshelf.bookshelf import *
 
+
 class BookTestCase(unittest.TestCase):
     """
     Tests for the Book class.
@@ -57,25 +58,31 @@ class BookshelfTestCase(unittest.TestCase):
         Test the insertion and deletion of a book from the bookshelf storage.
         :return:
         """
+
+        def add_book(bs: BookShelf, b: Book):
+            try:
+                bs.add_book(b)
+                bs.get_books_to_list(book_list)
+
+                self.assertTrue(b in book_list)
+
+                bs.del_book(b)
+
+                book_list.clear()
+            except Exception as e:
+                return False
+
+            return True
+
         bs = BookShelf()
         if bs.open():
             book_list = []
 
-            # Add a book
             b = Book(self.test_isbn)
-            bs.add_book(b)
 
-            #
-            bs.get_books_to_list(book_list)
-
-            self.assertTrue(b in book_list)
-
-            bs.del_book(b)
-
-            book_list.clear()
+            self.assertFalse(add_book(bs, b), msg="Security warning, it seems that bookshelf_user can add!")
 
             bs.get_books_to_list(book_list)
-
             self.assertTrue(b not in book_list)
 
 

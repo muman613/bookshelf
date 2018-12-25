@@ -90,10 +90,21 @@ class BookScanner:
                     self.book_list.append(book)
 
     def add_book_to_db(self, book: Book):
-        with self.conn as connect:
-            with connect.cursor() as cur:
-                cmd = "INSERT INTO book_table(isbn, title, publisher, author, pub_date, pages, description) VALUES(%s, %s, %s, %s, %s, %s, %s);"
-                cur.execute(cmd, (book.isbn, book.title, book.publisher, book.author, book.pubdate, book.pages, book.desc))
+        """
+        Add the scanned book to the database
+
+        TODO: Use the bookshelf class to handle insertion of new book.
+
+        :param book: book object representing the new record
+        :return:
+        """
+        try:
+            with self.conn as connect:
+                with connect.cursor() as cur:
+                    cmd = "INSERT INTO book_table(isbn, title, publisher, author, pub_date, pages, description, cover_image) VALUES(%s, %s, %s, %s, %s, %s, %s, %s);"
+                    cur.execute(cmd, (book.isbn, book.title, book.publisher, book.author, book.pubdate, book.pages, book.desc, book.image))
+        except psycopg2.Error as e:
+            pass
 
     def draw_book(self, book: Book):
         def add_label(y, label_text, field, dflt="N/A", use_value=None):
