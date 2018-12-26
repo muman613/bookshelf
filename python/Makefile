@@ -1,10 +1,11 @@
 NAME := muman/bookshelf
-TAG := $$(git log -1 --pretty=%h)
+ARCH=$$(uname -m)
+TAG := ${ARCH}-$$(git log -1 --pretty=%h)
 IMG := ${NAME}:${TAG}
 LATEST := ${NAME}:latest
 
 build:
-	echo "Hello"
+	echo "Building docker images for ${ARCH}"
 	@docker build -t ${IMG} .
 	@docker tag ${IMG} ${LATEST}
 
