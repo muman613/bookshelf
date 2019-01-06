@@ -1,4 +1,5 @@
 from flask import Flask, render_template, redirect, send_from_directory
+from flask_bootstrap import Bootstrap
 from bookshelf.bookshelf import BookShelf, SortBy
 import json
 import logging
@@ -12,6 +13,7 @@ logger.addHandler(handler)
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = "mad-money-month"
+Bootstrap(app)
 
 db = BookShelf()
 
@@ -28,7 +30,6 @@ def index():
 @app.route("/static/<file>")
 def serve_static(file):
     return send_from_directory("static", file)
-
 
 @app.route("/book/<isbn>")
 def lookup_isbn(isbn):
@@ -52,6 +53,10 @@ def lookup_isbn(isbn):
 
 @app.route("/books")
 def show_books():
+    """
+    This is the root of the bookshelf system.
+    :return:
+    """
     logger.debug("show_books()")
     book_list = []
     db.get_books_to_list(book_list, sortby=SortBy.TITLE)
