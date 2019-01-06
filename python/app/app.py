@@ -29,8 +29,31 @@ def index():
 def serve_static(file):
     return send_from_directory("static", file)
 
+@app.route("/api/books")
+def get_books():
+    """
 
-@app.route("/book/<isbn>")
+    :return:
+    """
+    book_list = []
+    db.get_books_to_list(book_list)
+
+    jsonarray = []
+    for book in book_list:
+        jsonobj = {
+            "isbn": book.isbn,
+            "title": book.title,
+            "publisher": book.publisher,
+            "pubdate": book.pubdate,
+            "pages": book.pages,
+            "desc": book.desc,
+        }
+        jsonarray.append(jsonobj)
+
+    output = json.dumps(jsonarray, indent=4)
+    return output
+
+@app.route("/api/book/<isbn>")
 def lookup_isbn(isbn):
     # logger.debug("lookup_isbn({})".format(isbn))
     book_list = []
@@ -52,6 +75,10 @@ def lookup_isbn(isbn):
 
 @app.route("/books")
 def show_books():
+    """
+    This is the root of the bookshelf system.
+    :return:
+    """
     logger.debug("show_books()")
     book_list = []
     db.get_books_to_list(book_list, sortby=SortBy.TITLE)
