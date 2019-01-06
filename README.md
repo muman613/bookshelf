@@ -18,8 +18,42 @@ To customize this application to run in another environment you can change the d
 
 The application works with the user `bookshelf` and the database `bookshelf` which has the default password.
 
+# Docker Container
+
+A `DockerFile` has been provided which sets up a container image running the Flask application. This container exposes the TCP port 8000 on the local machine. This container has been built for Raspberry Pi 3.
+
+    # Use an official Python runtime as a parent image
+    FROM python:3
+    
+    # Set the working directory to /app
+    WORKDIR /app
+    
+    # Copy the current directory contents into the container at /app
+    COPY app/app.py ./
+    COPY app/static ./static/
+    COPY app/templates ./templates/
+    COPY bookshelf ./bookshelf/
+    COPY requirements.txt ./
+    
+    # Install any needed packages specified in requirements.txt
+    RUN pip install --trusted-host pypi.python.org -r requirements.txt
+    
+    # Make port 80 available to the world outside this container
+    EXPOSE 8000
+    
+    # Run app.py when the container launches
+    CMD ["python", "app.py"]
+
+# RESTful API
+
+The `bookshelf` application now provides a special end-point containing the API. This API provides JSON data for all the books in the database or just the data for one particular book. Currently the API is not documented.
+
 ## TODO
 
 * Create the database if it doesn't exist.
-* Provide RESTful API for web interface.
+* Document the RESTful API
 * Handle screen resize gracefully ( https://docs.python.org/3/library/curses.html#constants )
+* Complete support for Bootstrap CSS framework.
+* Support passing password in via environment variable.
+* Add user authentication.
+* Use sqlalchemy ORM database module for DB access.
