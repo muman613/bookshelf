@@ -36,13 +36,14 @@ def get_books():
     :return:
     """
     book_list = []
-    db.get_books_to_list(book_list)
+    db.get_books_to_list(book_list, SortBy.TITLE)
 
     jsonarray = []
     for book in book_list:
         jsonobj = {
             "isbn": book.isbn,
             "title": book.title,
+            "author": book.author,
             "publisher": book.publisher,
             "pubdate": book.pubdate,
             "pages": book.pages,
@@ -65,6 +66,7 @@ def lookup_isbn(isbn):
             jsonobj = {
                 "isbn": book.isbn,
                 "title": book.title,
+                "author": book.author,
                 "publisher": book.publisher,
                 "pubdate": book.pubdate,
                 "pages": book.pages,
@@ -83,6 +85,15 @@ def show_books():
     book_list = []
     db.get_books_to_list(book_list, sortby=SortBy.TITLE)
     return render_template('booklist.html', book_list=book_list, title=title)
+
+@app.route("/table")
+def show_table():
+    """
+    This is the root of the bookshelf system.
+    :return:
+    """
+    logger.debug("show_table()")
+    return render_template('booktable.html', title=title)
 
 
 if __name__ == "__main__":

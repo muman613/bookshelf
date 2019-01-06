@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <!-- Here jqGrid will construct the table -->
+    <table id="grid"></table>
+    <div id="pager"></div>
+
+    <script>
+    //<![CDATA[
+    $(function () {
+        "use strict";
+        $("#grid").jqGrid({
+            colModel: [
+                { label: "ISBN", name: "isbn", width: 10 },
+                { label: "Book Title", name: "title", width: 25 },
+                { label: "Author", name: "author", width: 25 },
+                { label: "Publisher", name: "publisher", width: 25 }
+            ],
+            url: "api/books",
+            datatype: "json",
+            pager: "#pager",
+            caption: "Book Inventory",
+            autowidth: true,
+            shrinkToFit: true,
+            viewrecords: true,
+            loadonce: true
+
+        });
+    });
+    //]]>
+    </script>
+
+{% endblock %}
