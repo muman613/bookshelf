@@ -1,4 +1,4 @@
-from flask import Flask, render_template, redirect, send_from_directory
+from flask import Flask, render_template, redirect, send_from_directory, request
 from bookshelf.bookshelf import BookShelf, SortBy
 import json
 import logging
@@ -32,11 +32,20 @@ def serve_static(file):
 @app.route("/api/books")
 def get_books():
     """
-
+    Return a JSON array of book objects...
     :return:
     """
+    sortby_str = request.args.get('sidx', 'title')
+
+    if sortby_str == 'title':
+        sort_order = SortBy.TITLE
+    elif sortby_str == 'author':
+        sort_order = SortBy.AUTHOR
+    elif sortby_str == 'isbn':
+        sort_order = SortBy.ISBN
+
     book_list = []
-    db.get_books_to_list(book_list, SortBy.TITLE)
+    db.get_books_to_list(book_list, sort_order)
 
     jsonarray = []
     for book in book_list:

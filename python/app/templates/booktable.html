@@ -14,7 +14,8 @@
                 { label: "ISBN", name: "isbn", width: 10 },
                 { label: "Book Title", name: "title", width: 25 },
                 { label: "Author", name: "author", width: 25 },
-                { label: "Publisher", name: "publisher", width: 25 }
+                { label: "Publisher", name: "publisher", width: 25 },
+                { label: "Publication Date", name: "pubdate", width: 10 }
             ],
             url: "api/books",
             datatype: "json",
@@ -23,7 +24,10 @@
             autowidth: true,
             shrinkToFit: true,
             viewrecords: true,
-            loadonce: true
+            loadonce: true,
+            rowNum: 25,
+            altRows: true,
+            sortname: "title"
 
         });
     });
