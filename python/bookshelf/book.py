@@ -94,10 +94,7 @@ class Book:
             raise IndexError
 
     def __repr__(self):
-        return "{{ {}, \"{}\", \"{}\", \"{}\", \"{}\", \"{}\", \"{}\" }}".format(self.data["isbn"], self.data["title"],
-                                                                 self.data["author"], self.data["publisher"],
-                                                                 self.data["pubdate"], self.data["pages"],
-                                                                 self.data["desc"][:60])
+        return "{{ {}, title='{}', author='{}', publisher='{}' }}".format( self.data['isbn'], self.data['title'], self.data['author'], self.data['publisher'] )
 
     def __bool__(self):
         return self.data["isbn"] is not None and self.data["title"] is not None

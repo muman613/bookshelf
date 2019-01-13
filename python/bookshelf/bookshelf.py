@@ -69,6 +69,27 @@ class BookShelf:
 
                 cur.execute(cmd, (book.title, book.publisher, book.author, book.pubdate, book.pages, book.desc, book.image, book.isbn))
 
+    def get_book(self, isbn: str):
+        book = Book()
+
+        with self.db_conn as connect:
+            with connect.cursor() as cur:
+                cmd = """
+                SELECT * FROM book_table WHERE isbn=%s
+                """
+
+                cur.execute(cmd, (isbn, ))
+                row = cur.fetchone()
+                book.isbn = row[0]
+                book.title = row[1]
+                book.publisher = row[2]
+                book.author = row[3]
+                book.pubdate = row[4]
+                book.pages = row[5]
+                book.desc = row[6]
+                book.image = row[7]
+        return book
+
     def get_books_to_list(self, l: list, sortby=None):
         logging.getLogger("bookshelf").debug("get_books_to_list()")
 

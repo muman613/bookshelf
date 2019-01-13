@@ -1,4 +1,5 @@
 from flask import Flask, render_template, redirect, send_from_directory, request
+from flask_cors import CORS, cross_origin
 from bookshelf.bookshelf import BookShelf, SortBy
 import json
 import logging
@@ -29,41 +30,67 @@ def index():
 def serve_static(file):
     return send_from_directory("static", file)
 
-@app.route("/api/books")
+
+@app.route("/api/books", methods=[ 'GET', 'POST'])
+@cross_origin()
 def get_books():
     """
     Return a JSON array of book objects...
     :return:
     """
-    sortby_str = request.args.get('sidx', 'title')
 
-    if sortby_str == 'title':
-        sort_order = SortBy.TITLE
-    elif sortby_str == 'author':
-        sort_order = SortBy.AUTHOR
-    elif sortby_str == 'isbn':
-        sort_order = SortBy.ISBN
+    output = ''
 
-    book_list = []
-    db.get_books_to_list(book_list, sort_order)
+    if request.method == 'GET':
+        sortby_str = request.args.get('sidx', 'title')
 
-    jsonarray = []
-    for book in book_list:
-        jsonobj = {
-            "isbn": book.isbn,
-            "title": book.title,
-            "author": book.author,
-            "publisher": book.publisher,
-            "pubdate": book.pubdate,
-            "pages": book.pages,
-            "desc": book.desc,
-        }
-        jsonarray.append(jsonobj)
+        if sortby_str == 'title':
+            sort_order = SortBy.TITLE
+        elif sortby_str == 'author':
+            sort_order = SortBy.AUTHOR
+        elif sortby_str == 'isbn':
+            sort_order = SortBy.ISBN
 
-    output = json.dumps(jsonarray, indent=4)
+        book_list = []
+        db.get_books_to_list(book_list, sort_order)
+
+        jsonarray = []
+        for book in book_list:
+            jsonobj = {
+                "isbn": book.isbn,
+                "title": book.title,
+                "author": book.author,
+                "publisher": book.publisher,
+                "pubdate": book.pubdate,
+                "pages": book.pages,
+                "desc": book.desc,
+            }
+            jsonarray.append(jsonobj)
+
+        output = json.dumps(jsonarray, indent=4)
+    elif request.method == 'POST':
+        if 'oper' in request.values and request.values['oper'] == 'edit':
+            isbn = request.values['isbn']
+            title = request.values['title']
+            author = request.values['author']
+            publisher = request.values['publisher']
+
+            edit_book = db.get_book(isbn)
+            print(edit_book)
+            edit_book.title = title
+            edit_book.author = author
+            edit_book.publisher = publisher
+
+            db.update_book(edit_book)
+
+            output = json.dumps("{ status: 'Success' }")
+        else:
+            pass
+
     return output
 
 @app.route("/api/book/<isbn>")
+@cross_origin()
 def lookup_isbn(isbn):
     # logger.debug("lookup_isbn({})".format(isbn))
     book_list = []
