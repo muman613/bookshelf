@@ -1,8 +1,9 @@
-from flask import Flask, render_template, redirect, send_from_directory, request
+from flask import Flask, render_template, redirect, send_from_directory, request, session, flash, url_for
 from flask_cors import CORS, cross_origin
 from bookshelf.bookshelf import BookShelf, SortBy
 import json
 import logging
+from functools import wraps
 
 logger = logging.getLogger("bookshelf")
 handler = logging.StreamHandler()
@@ -20,10 +21,45 @@ db.open()
 
 title = "Bookend Book Inventory"
 
-@app.route("/")
-@app.route("/index")
-def index():
-    return redirect("/books")
+
+# login required decorator
+def login_required(f):
+    @wraps(f)
+    def wrap(*args, **kwargs):
+        if 'logged_in' in session:
+            return f(*args, **kwargs)
+        else:
+            flash('You need to login first.')
+            return redirect(url_for('login'))
+    return wrap
+
+
+# @app.route("/")
+# @app.route("/index")
+# def index():
+#     return redirect("/books")
+
+# route for handling the login page logic
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    error = None
+    if request.method == 'POST':
+        if (request.form['username'] != 'admin') \
+                or request.form['password'] != 'admin':
+            error = 'Invalid Credentials. Please try again.'
+        else:
+            session['logged_in'] = True
+            flash('You were logged in.')
+            return redirect(url_for('show_books'))
+    return render_template('login.html', error=error)
+
+
+@app.route('/logout')
+@login_required
+def logout():
+    session.pop('logged_in', None)
+    flash('You were logged out.')
+    return redirect(url_for('login'))
 
 
 @app.route("/static/<file>")
@@ -32,6 +68,7 @@ def serve_static(file):
 
 
 @app.route("/api/books", methods=[ 'GET', 'POST'])
+@login_required
 @cross_origin()
 def get_books():
     """
@@ -90,6 +127,7 @@ def get_books():
     return output
 
 @app.route("/api/book/<isbn>")
+@login_required
 @cross_origin()
 def lookup_isbn(isbn):
     # logger.debug("lookup_isbn({})".format(isbn))
@@ -111,7 +149,8 @@ def lookup_isbn(isbn):
     output = json.dumps(jsonobj, indent=4)
     return output
 
-@app.route("/books")
+@app.route("/")
+@login_required
 def show_books():
     """
     This is the root of the bookshelf system.
@@ -123,6 +162,7 @@ def show_books():
     return render_template('booklist.html', book_list=book_list, title=title)
 
 @app.route("/table")
+@login_required
 def show_table():
     """
     This is the root of the bookshelf system.
