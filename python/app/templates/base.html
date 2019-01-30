@@ -21,12 +21,14 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/free-jqgrid/4.15.5/jquery.jqgrid.min.js"></script>
 </head>
 <body>
-    <div id="tools">Bookshelf: <a href="/table">jqGrid Example</a> <a href="/logout">Log Out</a></div>
+    {%  block navbar %}
+    {%  endblock %}
+
     <hr>
-    <div id="heading"><h1>Bookend Book Inventory System</h1></div>
-    {% if name %}
-    <p>Hello {{  name }}</p>
-    {% endif %}
+
+    <div id="heading">
+        <h1>Bookend Book Inventory System</h1>
+    </div>
 
     {% block content %}
     {% endblock %}

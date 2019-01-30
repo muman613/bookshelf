@@ -51,7 +51,7 @@ def login():
             session['logged_in'] = True
             flash('You were logged in.')
             return redirect(url_for('show_books'))
-    return render_template('login.html', error=error)
+    return render_template('login.html', error=error, title='Login Page')
 
 
 @app.route('/logout')
@@ -169,7 +169,7 @@ def show_table():
     :return:
     """
     logger.debug("show_table()")
-    return render_template('booktable.html', title=title)
+    return render_template('booktable.html', title='jqQuery Table')
 
 
 if __name__ == "__main__":

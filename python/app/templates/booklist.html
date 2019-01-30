@@ -1,5 +1,9 @@
 {% extends "base.html" %}
 
+{%  block navbar %}
+    <div id="tools">Bookshelf: <a href="/table">jqGrid Example</a> <a href="/logout">Log Out</a></div>
+{%  endblock %}
+
 {% block content %}
     <p>Found {{ book_list|length }} books:</p>
     <table id="booktable">
