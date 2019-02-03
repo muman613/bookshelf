@@ -1,3 +1,4 @@
+
 select
     book.isbn as "ISBN",
     book.title as "Title",
@@ -15,4 +16,6 @@ where
     copies.book_id = book.id
     and copies.owner_id = users.id
     and book.author_id = auth.id
-    and book.publisher_id = pub.id; 
+    and book.publisher_id = pub.id 
+order by book.title;
+

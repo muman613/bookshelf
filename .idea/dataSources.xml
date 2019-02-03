@@ -15,5 +15,11 @@
       <jdbc-driver>org.postgresql.Driver</jdbc-driver>
       <jdbc-url>jdbc:postgresql://raspi-mate:5432/bookshelf</jdbc-url>
     </data-source>
+    <data-source source="LOCAL" name="BookShelf2 on LocalHost" uuid="b7ce2116-cae9-4d3d-86f2-793770676a54">
+      <driver-ref>postgresql</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>org.postgresql.Driver</jdbc-driver>
+      <jdbc-url>jdbc:postgresql://localhost:5432/bookshelf2</jdbc-url>
+    </data-source>
   </component>
 </project>
