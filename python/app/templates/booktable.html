@@ -1,5 +1,9 @@
 {% extends "base.html" %}
 
+{% block navbar %}
+    <div id="tools">Bookshelf: <a href="/">Table</a> <a href="/logout">Log Out</a></div>
+{% endblock %}
+
 {% block content %}
     <!-- Here jqGrid will construct the table -->
     <table id="grid"></table>
