@@ -4,6 +4,10 @@ from bookshelf.bookshelf import BookShelf, SortBy
 import json
 import logging
 from functools import wraps
+import os
+import argparse
+
+options = argparse.Namespace()
 
 logger = logging.getLogger("bookshelf")
 handler = logging.StreamHandler()
@@ -14,10 +18,6 @@ logger.addHandler(handler)
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = "mad-money-month"
-
-db = BookShelf()
-
-db.open()
 
 title = "Bookend Book Inventory"
 
@@ -33,11 +33,6 @@ def login_required(f):
             return redirect(url_for('login'))
     return wrap
 
-
-# @app.route("/")
-# @app.route("/index")
-# def index():
-#     return redirect("/books")
 
 # route for handling the login page logic
 @app.route('/login', methods=['GET', 'POST'])
@@ -89,7 +84,7 @@ def get_books():
             sort_order = SortBy.ISBN
 
         book_list = []
-        db.get_books_to_list(book_list, sort_order)
+        app.db.get_books_to_list(book_list, sort_order)
 
         jsonarray = []
         for book in book_list:
@@ -112,13 +107,13 @@ def get_books():
             author = request.values['author']
             publisher = request.values['publisher']
 
-            edit_book = db.get_book(isbn)
+            edit_book = app.db.get_book(isbn)
             print(edit_book)
             edit_book.title = title
             edit_book.author = author
             edit_book.publisher = publisher
 
-            db.update_book(edit_book)
+            app.db.update_book(edit_book)
 
             output = json.dumps("{ status: 'Success' }")
         else:
@@ -132,7 +127,7 @@ def get_books():
 def lookup_isbn(isbn):
     # logger.debug("lookup_isbn({})".format(isbn))
     book_list = []
-    db.get_books_to_list(book_list)
+    app.db.get_books_to_list(book_list)
     jsonobj = {}
 
     for book in book_list:
@@ -158,7 +153,7 @@ def show_books():
     """
     logger.debug("show_books()")
     book_list = []
-    db.get_books_to_list(book_list, sortby=SortBy.TITLE)
+    app.db.get_books_to_list(book_list, sortby=SortBy.TITLE)
     return render_template('booklist.html', book_list=book_list, title=title)
 
 @app.route("/table")
@@ -172,17 +167,46 @@ def show_table():
     return render_template('booktable.html', title='jqQuery Table')
 
 
+def initdb():
+    print('initdb() {}'.format(options))
+    DB_NAME = "bookshelf"
+    app.db = BookShelf(dbase=DB_NAME, host=options.db_host, user=options.db_user,  pwd=options.db_pass)
+    app.db.open()
+
 if __name__ == "__main__":
-    import argparse
 
     parser = argparse.ArgumentParser(prog="app.py", description="bookshelf app")
-    parser.add_argument("--debug", dest="debug", default=False, action='store_true')
-    parser.add_argument("--port", dest="port", default="8000", action='store')
-    parser.add_argument("--host", dest="host", default="0.0.0.0", action='store')
 
-    args = parser.parse_args()
+    parser.add_argument("--debug",
+                        dest="debug",
+                        default=False,
+                        action='store_true')
+    parser.add_argument("--app-port",
+                        dest="app_port",
+                        default=os.getenv('BOOKSHELF_WEB_PORT', '8000'),
+                        action='store')
+    parser.add_argument("--app-host",
+                        dest="app_host",
+                        default=os.getenv('BOOKSHELF_WEB_HOST', '0.0.0.0'),
+                        action='store')
+    parser.add_argument("--db-host",
+                        dest='db_host',
+                        default=os.getenv('BOOKSHELF_DB_HOST', 'laserquad.ddns.net'),
+                        action='store')
+    parser.add_argument("--db-user",
+                        dest='db_user',
+                        default=os.getenv('BOOKSHELF_DB_USER', 'bookshelf_user'),
+                        action='store')
+    parser.add_argument("--db-password",
+                        dest='db_pass',
+                        default=os.getenv('BOOKSHELF_DB_PASS', 'default'),
+                        action='store')
+    
+    args = parser.parse_args(namespace=options)
 
     if args.debug:
         logger.setLevel(logging.DEBUG)
 
-    app.run(debug=args.debug, port=args.port, host=args.host)
+    initdb()
+
+    app.run(debug=args.debug, port=args.app_port, host=args.app_host)

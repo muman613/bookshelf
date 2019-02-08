@@ -5,9 +5,9 @@ import logging
 import os
 
 DB_NAME = "bookshelf"
-HOST_NAME = os.getenv("BOOKSHELF_HOST", "laserquad.ddns.net")
-USER_NAME = os.getenv("BOOKSHELF_USER", "bookshelf_user")
-USER_PASSWD = os.getenv("BOOKSHELF_PASSWORD","default")
+#HOST_NAME = os.getenv("BOOKSHELF_DB_HOST", "laserquad.ddns.net")
+#USER_NAME = os.getenv("BOOKSHELF_DB_USER", "bookshelf_user")
+#USER_PASSWD = os.getenv("BOOKSHELF_DB_PASSWORD","default")
 
 
 class SortBy(IntEnum):
@@ -26,14 +26,15 @@ class BookShelf:
     """
     This class represents the Bookshelf, an index of books accessible by a list.
     """
-    def __init__(self, host=HOST_NAME, user=USER_NAME, pwd=USER_PASSWD):
+    def __init__(self, dbase=None, host=None, user=None, pwd=None):
         self.db_conn = None
+        self._db_name = dbase
         self._host_name = host
         self._user_name = user
         self._pwd = pwd
 
     def open(self):
-        self.db_conn = pg.connect(dbname=DB_NAME, user=self._user_name, password=self._pwd, host=self._host_name)
+        self.db_conn = pg.connect(dbname=self._db_name, user=self._user_name, password=self._pwd, host=self._host_name)
         return self.db_conn.status == pg.extensions.STATUS_READY
 
     def close(self):
