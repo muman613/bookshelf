@@ -26,7 +26,7 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = "mad-money-month"
 Bootstrap(app)
 
-title = "Bookend Book Inventory"
+title = "Bookshelf Book Inventory"
 
 
 # login required decorator

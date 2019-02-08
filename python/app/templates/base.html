@@ -1,9 +1,7 @@
 {%  extends "bootstrap/base.html" %}
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
+{% block head %}
+    {{ super() }}
     {% if title %}
     <title>{{  title }}</title>
     {% else %}
@@ -21,18 +19,18 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/free-jqgrid/4.15.5/css/ui.jqgrid.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/free-jqgrid/4.15.5/jquery.jqgrid.min.js"></script>
-</head>
-<body>
-    {%  block navbar %}
-    {%  endblock %}
+    <style type="text/css">
+        .padded {
+            margin: 20px;
+        }
+    </style>
+
+{% endblock %}
+
+{%  block navbar %}
+{%  endblock %}
 
     <hr>
 
-    <div id="heading">
-        <h1>Bookend Book Inventory System</h1>
-    </div>
-
-    {% block content %}
-    {% endblock %}
-</body>
-</html>
+{% block content %}
+{% endblock %}

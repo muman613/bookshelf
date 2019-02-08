@@ -1,7 +1,16 @@
 {% extends "base.html" %}
 
 {% block navbar %}
-    <div id="tools">Bookshelf: <a href="/">Table</a> <a href="/logout">Log Out</a></div>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" href="#">Bookshelf</a>
+    <div class="collapse navbar-collapse" id="navbarAltMarkup">
+        <div class="navbar-nav">
+            <a class="nav-item nav-link active" href="/table">jqGrid Table</a>
+            <a class="nav-item nav-link" href="/">Table</a>
+            <a class="nav-item nav-link" href="/logout">Log Out</a>
+        </div>
+    </div>
+    </nav>
 {% endblock %}
 
 {% block content %}
