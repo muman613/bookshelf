@@ -4,11 +4,6 @@ from enum import IntEnum
 import logging
 import os
 
-DB_NAME = "bookshelf"
-#HOST_NAME = os.getenv("BOOKSHELF_DB_HOST", "laserquad.ddns.net")
-#USER_NAME = os.getenv("BOOKSHELF_DB_USER", "bookshelf_user")
-#USER_PASSWD = os.getenv("BOOKSHELF_DB_PASSWORD","default")
-
 
 class SortBy(IntEnum):
     """

@@ -1,3 +1,8 @@
+"""
+    BookShelf App Version 1.0
+    By Michael A. Uman (C) 2019 HUman DevTools
+"""
+
 from flask import Flask, render_template, redirect, send_from_directory, request, session, flash, url_for
 from flask_cors import CORS, cross_origin
 from bookshelf.bookshelf import BookShelf, SortBy
@@ -168,24 +173,25 @@ def show_table():
 
 
 def initdb():
-    print('initdb() {}'.format(options))
+    logger.debug('initdb() -- initializing database')
+
     DB_NAME = "bookshelf"
     app.db = BookShelf(dbase=DB_NAME, host=options.db_host, user=options.db_user,  pwd=options.db_pass)
     app.db.open()
 
-if __name__ == "__main__":
 
+if __name__ == "__main__":
     parser = argparse.ArgumentParser(prog="app.py", description="bookshelf app")
 
     parser.add_argument("--debug",
                         dest="debug",
                         default=False,
                         action='store_true')
-    parser.add_argument("--app-port",
+    parser.add_argument("--web-port",
                         dest="app_port",
                         default=os.getenv('BOOKSHELF_WEB_PORT', '8000'),
                         action='store')
-    parser.add_argument("--app-host",
+    parser.add_argument("--web-host",
                         dest="app_host",
                         default=os.getenv('BOOKSHELF_WEB_HOST', '0.0.0.0'),
                         action='store')
@@ -207,6 +213,7 @@ if __name__ == "__main__":
     if args.debug:
         logger.setLevel(logging.DEBUG)
 
+    # Initialize the apps database object
     initdb()
 
     app.run(debug=args.debug, port=args.app_port, host=args.app_host)
