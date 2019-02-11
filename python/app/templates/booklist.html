@@ -1,34 +1,52 @@
 {% extends "base.html" %}
 
 {%  block navbar %}
-    <div id="tools">Bookshelf: <a href="/table">jqGrid Example</a> <a href="/logout">Log Out</a></div>
+<!--    <div id="tools">Bookshelf: <a href="/table">jqGrid Example</a> <a href="/logout">Log Out</a></div> -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+      <a class="navbar-brand" href="#">Bookshelf</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+        <div class="navbar-nav">
+          <a class="nav-item nav-link active" href="#">Home <span class="sr-only">(current)</span></a>
+          <a class="nav-item nav-link" href="/table">jqGrid Table</a>
+          <a class="nav-item nav-link" href="/logout">Logout</a>
+        </div>
+      </div>
+    </nav>
 {%  endblock %}
 
 {% block content %}
-    <p>Found {{ book_list|length }} books:</p>
-    <table id="booktable">
-        <tr>
-            <th>ISBN</th>
-            <th>Title</th>
-            <th>Author</th>
-            <th>Cover</th>
-        </tr>
-        {% for book in book_list %}
+    <div class="text-center">
+        <h1>Bookshelf Book Inventory System</h1>
+    </div>
+    <div class="padded">
+        <p>Found {{ book_list|length }} books:</p>
+        <table class="table table-striped table-bordered">
             <tr>
-                <td>{{ book.isbn }}</td>
-                <td>{{ book.title }}</td>
-                <td>{{ book.author }}</td>
-                <td>
-                    <a href="api/book/{{ book.isbn }}">
-                        {# If the image contains "N/A"  #}
-                        {% if book.image != "N/A" %}
-                            <img src="{{ book.image }}">
-                        {% else %}
-                            <img width="128" src="static/no_image.jpg">
-                        {% endif %}
-                    </a>
-                </td>
+                <th>ISBN</th>
+                <th>Title</th>
+                <th>Author</th>
+                <th>Cover</th>
             </tr>
-        {% endfor %}
-    </table>
+            {% for book in book_list %}
+                <tr>
+                    <td>{{ book.isbn }}</td>
+                    <td>{{ book.title }}</td>
+                    <td>{{ book.author }}</td>
+                    <td>
+                        <a href="api/book/{{ book.isbn }}">
+                            {# If the image contains "N/A"  #}
+                            {% if book.image != "N/A" %}
+                                <img src="{{ book.image }}">
+                            {% else %}
+                                <img width="128" src="static/no_image.jpg">
+                            {% endif %}
+                        </a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
 {% endblock %}

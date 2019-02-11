@@ -5,6 +5,7 @@
 
 from flask import Flask, render_template, redirect, send_from_directory, request, session, flash, url_for
 from flask_cors import CORS, cross_origin
+from flask_bootstrap import Bootstrap
 from bookshelf.bookshelf import BookShelf, SortBy
 import json
 import logging
@@ -23,8 +24,9 @@ logger.addHandler(handler)
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = "mad-money-month"
+Bootstrap(app)
 
-title = "Bookend Book Inventory"
+title = "Bookshelf Book Inventory"
 
 
 # login required decorator
