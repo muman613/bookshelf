@@ -1,26 +1,40 @@
 {% extends "base.html" %}
 
+{% block head %}
+    {{  super() }}
+    <style type="text/css">
+        .ui-widget-content td {
+            font-size:14pt;
+        }
+    </style>
+{% endblock %}
 {% block navbar %}
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <a class="navbar-brand" href="#">Bookshelf</a>
-    <div class="collapse navbar-collapse" id="navbarAltMarkup">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+      <a class="navbar-brand" href="#">Bookshelf</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
         <div class="navbar-nav">
-            <a class="nav-item nav-link active" href="/table">jqGrid Table</a>
-            <a class="nav-item nav-link" href="/">Table</a>
-            <a class="nav-item nav-link" href="/logout">Log Out</a>
+          <a class="nav-item nav-link active" href="#">Home <span class="sr-only">(current)</span></a>
+          <a class="nav-item nav-link" href="/">Normal Table</a>
+          <a class="nav-item nav-link" href="/logout">Logout</a>
         </div>
-    </div>
+      </div>
     </nav>
+
 {% endblock %}
 
 {% block content %}
+    <div class="text-center">
+        <h1>Bookshelf Book Inventory System</h1>
+    </div>
     <!-- Here jqGrid will construct the table -->
     <table id="grid"></table>
     <div id="pager"></div>
 
     <script>
     //<![CDATA[
-    $(function () {
         "use strict";
         $("#grid").jqGrid({
             styleUI : "Bootstrap",
@@ -42,9 +56,7 @@
             rowNum: 25,
             altRows: true,
             sortname: "title"
-
         });
-    });
     //]]>
     </script>
 
