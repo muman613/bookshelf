@@ -15,4 +15,6 @@ push:
 login:
 	@docker login ${DOCKER_USER} -p {DOCKER_PASS}
 
-
+clean:
+	echo "Removing image"
+	@docker rmi -f ${LATEST}
