@@ -47,7 +47,6 @@ The `bookshelf` application now provides a special end-point containing the API.
 * Create the database if it doesn't exist.
 * Document the RESTful API
 * Handle screen resize gracefully ( https://docs.python.org/3/library/curses.html#constants )
-* Complete support for Bootstrap CSS framework.
 * Support passing password in via environment variable.
 * Use sqlalchemy ORM database module for DB access.
 * New schema in Bookshelf 2.0 coming soon.
