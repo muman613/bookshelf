@@ -70,7 +70,6 @@ def serve_static(file):
 
 
 @app.route("/api/books", methods=[ 'GET', 'POST'])
-@login_required
 @cross_origin()
 def get_books():
     """
@@ -81,6 +80,9 @@ def get_books():
     output = ''
 
     if request.method == 'GET':
+        if 'logged_in' not in session:
+            logger.debug('User not logged in...')
+
         sortby_str = request.args.get('sidx', 'title')
 
         if sortby_str == 'title':
@@ -107,7 +109,7 @@ def get_books():
             jsonarray.append(jsonobj)
 
         output = json.dumps(jsonarray, indent=4)
-    elif request.method == 'POST':
+    elif request.method == 'POST' and 'logged_in' in session:
         if 'oper' in request.values and request.values['oper'] == 'edit':
             isbn = request.values['isbn']
             title = request.values['title']
@@ -199,7 +201,7 @@ if __name__ == "__main__":
                         action='store')
     parser.add_argument("--db-host",
                         dest='db_host',
-                        default=os.getenv('BOOKSHELF_DB_HOST', 'laserquad.ddns.net'),
+                        default=os.getenv('BOOKSHELF_DB_HOST', 'raspi-mate'),
                         action='store')
     parser.add_argument("--db-user",
                         dest='db_user',
